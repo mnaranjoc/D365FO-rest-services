@@ -46,6 +46,7 @@ namespace D365FOrestservices
                 appContract.applicationId,
                 credential);
             task.Wait();
+        }
 
             AuthenticationResult authenticationResult = task.Result;
 
