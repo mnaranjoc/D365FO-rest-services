@@ -36,17 +36,19 @@ namespace D365FOrestservices
         private AuthenticationResult GetAuthorization()
         {
             UriBuilder uri = new UriBuilder("https://login.windows.net/" + userContract.domain);
-            AuthenticationContext authenticationContext
-            = new AuthenticationContext(uri.ToString());
-            UserPasswordCredential credential = new
-            UserPasswordCredential(
-            userContract.userName, userContract.password);
+
+            AuthenticationContext authenticationContext = new AuthenticationContext(uri.ToString());
+
+            UserPasswordCredential credential = new UserPasswordCredential(userContract.userName, userContract.password);
+
             Task<AuthenticationResult> task = authenticationContext.AcquireTokenAsync(
-            appContract.resource,
-            appContract.applicationId, credential);
+                appContract.resource,
+                appContract.applicationId,
+                credential);
             task.Wait();
-            AuthenticationResult
-            authenticationResult = task.Result;
+
+            AuthenticationResult authenticationResult = task.Result;
+
             return authenticationResult;
         }
 
@@ -58,8 +60,7 @@ namespace D365FOrestservices
                 authenticationResult = GetAuthorization();
                 //this gets the authorization token, this
                 // must be set on the Http header for all requests
-                authenticationHeader =
-                authenticationResult.CreateAuthorizationHeader();
+                authenticationHeader = authenticationResult.CreateAuthorizationHeader();
             }
             catch (Exception e)
             {
@@ -73,19 +74,14 @@ namespace D365FOrestservices
         private Resources MakeResources()
         {
             string entityRootPath = appContract.resource + "/data";
-            Uri oDataUri = new Uri(entityRootPath,
-            UriKind.Absolute);
+            Uri oDataUri = new Uri(entityRootPath, UriKind.Absolute);
             var resources = new Resources(oDataUri);
-            resources.SendingRequest2 += new
-            EventHandler<SendingRequest2EventArgs>(
-            delegate (object sender,
-            SendingRequest2EventArgs e)
+            resources.SendingRequest2 += new EventHandler<SendingRequest2EventArgs>(delegate (object sender, SendingRequest2EventArgs e)
             {
                 // This event handler is needed to set
                 // the authentication code we got when
                 // we logged on.
-                e.RequestMessage.SetHeader(OAuthHeader,
-                authenticationHeader);
+                e.RequestMessage.SetHeader(OAuthHeader, authenticationHeader);
             });
             return resources;
         }
