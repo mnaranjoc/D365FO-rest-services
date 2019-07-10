@@ -16,6 +16,7 @@ namespace ConsoleApplication
         string requestUri = "";
         string clientSecret = "";
 
+        // Getting access token with user credentials
         public void test1()
         {
             var credentials = new UserPasswordCredential(user, pass);
@@ -36,6 +37,7 @@ namespace ConsoleApplication
             }
         }
 
+        /// Access token request with a shared secret
         public async void test2()
         {
             HttpClient client = new HttpClient();
